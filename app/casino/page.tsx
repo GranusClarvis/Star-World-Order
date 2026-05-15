@@ -2,7 +2,7 @@ import CasinoContent from './CasinoContent';
 
 export const metadata = {
   title: 'Cosmic Casino | Star World Order',
-  description: 'Enter the Cosmic Casino - Provably fair games on Monad blockchain. Play slots, and more games coming soon!',
+  description: 'Cosmic Casino — provably fair games on Monad. Star Forge Slots, Cosmic Flip, Gravity Dice, and Constellation Climb. The order plays, the stars decide.',
 };
 
 export default function CasinoPage() {

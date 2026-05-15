@@ -14,13 +14,18 @@ interface GameInfo {
   name: string;
   description: string;
   emoji: string;
-  status: 'live' | 'coming_soon' | 'maintenance';
+  // `testnet` = contracts deployed on Monad testnet, UI surface not yet
+  // wired for real bets. Treated as non-clickable in CardInner.
+  status: 'live' | 'testnet' | 'coming_soon' | 'maintenance';
   path: string;
   minBet: string;
   maxWin: string;
   rtp: string;
   color: string;
   glowColor: string;
+  // Optional Monad testnet contract address — shown as a small "deployed @"
+  // hint and links to the explorer on testnet cards.
+  testnetAddress?: `0x${string}`;
 }
 
 interface CasinoStats {
@@ -51,15 +56,44 @@ const GAMES: GameInfo[] = [
   {
     id: 'coinflip',
     name: 'Cosmic Flip',
-    description: 'Classic heads or tails with 2x payout. Simple, fast, and provably fair.',
+    description: 'Heads or tails — provably fair commit-reveal. 1.98× payout, 1% house edge. Stars decide which side faces up.',
     emoji: '🪙',
-    status: 'coming_soon',
+    status: 'testnet',
     path: '/casino/coinflip',
-    minBet: '10 MON',
-    maxWin: '1,000 MON',
-    rtp: '98%',
+    minBet: '0.001 MON',
+    maxWin: '0.002 MON × 1.98',
+    rtp: '99%',
     color: '#00ffff',
     glowColor: 'rgba(0, 255, 255, 0.5)',
+    testnetAddress: '0x064b8bfc03b23D2b525deD9d3969090347A21983',
+  },
+  {
+    id: 'dice',
+    name: 'Gravity Dice',
+    description: 'Roll-under dice. Pick your target between 2 and 98 — lower target, higher payout. 1% house edge baked in.',
+    emoji: '🎲',
+    status: 'testnet',
+    path: '/casino/dice',
+    minBet: '0.001 MON',
+    maxWin: '99×',
+    rtp: '99%',
+    color: '#44ff88',
+    glowColor: 'rgba(68, 255, 136, 0.5)',
+    testnetAddress: '0xAC023542A8168465EE4A1b3e8Ae0f58F36A6d84B',
+  },
+  {
+    id: 'constellation-climb',
+    name: 'Constellation Climb',
+    description: 'Climb the constellation: call higher or lower on the next star. Compound your multiplier until you cash out — or fall back to the void.',
+    emoji: '🌌',
+    status: 'testnet',
+    path: '/casino/constellation-climb',
+    minBet: '0.001 MON',
+    maxWin: '1.0 MON cap',
+    rtp: '99%',
+    color: '#9966ff',
+    glowColor: 'rgba(153, 102, 255, 0.5)',
+    testnetAddress: '0xd9B9b6c37ad4f3D5b07ae76dE261c5C865600d6e',
   },
   {
     id: 'roulette',
@@ -73,19 +107,6 @@ const GAMES: GameInfo[] = [
     rtp: '97.3%',
     color: '#ff00ff',
     glowColor: 'rgba(255, 0, 255, 0.5)',
-  },
-  {
-    id: 'dice',
-    name: 'Gravity Dice',
-    description: 'Roll the dice and predict high or low. Adjustable odds for risk takers.',
-    emoji: '🎲',
-    status: 'coming_soon',
-    path: '/casino/dice',
-    minBet: '5 MON',
-    maxWin: '500 MON',
-    rtp: '99%',
-    color: '#44ff88',
-    glowColor: 'rgba(68, 255, 136, 0.5)',
   },
 ];
 
@@ -126,20 +147,27 @@ interface GameCardProps {
 
 function GameCard({ game }: GameCardProps) {
   const isLive = game.status === 'live';
+  const isTestnet = game.status === 'testnet';
   const isComingSoon = game.status === 'coming_soon';
 
   return (
     <div
       className={`
         relative overflow-hidden rounded-xl border-2 transition-all duration-300
-        ${isLive 
-          ? 'border-[#ffd700]/50 hover:border-[#ffd700] hover:scale-[1.02] cursor-pointer' 
-          : 'border-[#2a2a4e] opacity-70 cursor-not-allowed'
+        ${isLive
+          ? 'border-[#ffd700]/50 hover:border-[#ffd700] hover:scale-[1.02] cursor-pointer'
+          : isTestnet
+            ? 'border-[#00ffff]/40 hover:border-[#00ffff]/80 opacity-90'
+            : 'border-[#2a2a4e] opacity-70 cursor-not-allowed'
         }
         bg-gradient-to-br from-[#1a1a2e] to-[#0d0d1a]
       `}
       style={{
-        boxShadow: isLive ? `0 0 30px ${game.glowColor}` : 'none',
+        boxShadow: isLive
+          ? `0 0 30px ${game.glowColor}`
+          : isTestnet
+            ? `0 0 12px ${game.glowColor}`
+            : 'none',
       }}
     >
       {/* Status Badge */}
@@ -147,6 +175,10 @@ function GameCard({ game }: GameCardProps) {
         {isLive ? (
           <span className="px-2 py-1 text-[10px] font-bold bg-[#44ff88]/20 text-[#44ff88] rounded border border-[#44ff88]/50 animate-pulse">
             🎮 LIVE
+          </span>
+        ) : isTestnet ? (
+          <span className="px-2 py-1 text-[10px] font-bold bg-[#00ffff]/20 text-[#00ffff] rounded border border-[#00ffff]/50">
+            🛰 TESTNET
           </span>
         ) : isComingSoon ? (
           <span className="px-2 py-1 text-[10px] font-bold bg-[#9966ff]/20 text-[#9966ff] rounded border border-[#9966ff]/50">
@@ -231,6 +263,25 @@ function CardInner({ game }: { game: GameInfo }) {
           >
             PLAY NOW →
           </span>
+        </div>
+      )}
+
+      {/* Testnet contract link */}
+      {game.status === 'testnet' && game.testnetAddress && (
+        <div className="mt-4 text-center">
+          <a
+            href={`https://testnet.monadscan.com/address/${game.testnetAddress}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-3 py-1 rounded text-[10px] font-mono tracking-wide hover:underline"
+            style={{
+              color: game.color,
+              border: `1px solid ${game.color}40`,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            view contract ↗
+          </a>
         </div>
       )}
     </>
