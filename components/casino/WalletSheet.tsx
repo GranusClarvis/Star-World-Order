@@ -1,6 +1,6 @@
 // WalletSheet — modal-on-mobile / slide-over wallet surface for SWO Cosmic Casino.
 //
-// Ported from BunnyBagz `apps/web/src/components/WalletSheet.tsx`. Carried
+// Ported from the upstream BB reference (`apps/web/src/components/WalletSheet.tsx`). Carried
 // forward intact (lesson D2 in `bb_keyboard_nav_audit_2026-05-09.md` and
 // the WALLETSHEET_ESCAPE_AND_FOCUS_TRAP refinement, mega-house 1a22b6a):
 //

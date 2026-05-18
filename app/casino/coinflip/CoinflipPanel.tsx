@@ -215,6 +215,7 @@ export function CoinflipPanel(props: CoinflipPanelProps) {
         testIdPrefix="coinflip"
         ariaLabel="Coinflip controls"
         multiplier="1.98×"
+        dealerImageSrc="/casino/skrumpey-dealer-idle.png"
         sideSelector={sideSelector}
         stakeUnit="MON"
         stake={stake}
@@ -234,6 +235,7 @@ export function CoinflipPanel(props: CoinflipPanelProps) {
           reveal={serverReveal}
           salt={clientSeed ?? undefined}
           game="coinflip"
+          dealerImageSrc="/casino/skrumpey-dealer-cheer.png"
         />
       ) : null}
     </div>

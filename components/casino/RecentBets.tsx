@@ -1,5 +1,5 @@
 // RecentBets — settled-bets list for the SWO Cosmic Casino wallet sheet,
-// ported from BunnyBagz `apps/web/src/components/RecentBetsList.tsx`.
+// ported from the upstream BB reference (`apps/web/src/components/RecentBetsList.tsx`).
 //
 // Until the SWO indexer lands the component is a graceful empty surface:
 // callers that do not pass a `bets` prop see the "No recent bets yet"

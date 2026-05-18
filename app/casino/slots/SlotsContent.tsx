@@ -820,7 +820,16 @@ export default function SlotsContent() {
       
       {/* Header */}
       <div className="text-center mb-6">
-        <div className="flex items-center justify-center gap-2 mb-2">
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <img
+            src="/casino/skrumpey-dealer-idle.png"
+            alt="Star Skrumpey dealer"
+            width={48}
+            height={48}
+            className="rounded-lg border border-[#3a3a5e] bg-[#0a0a15]"
+            style={{ imageRendering: 'pixelated', padding: 2 }}
+            data-testid="slots-dealer-image"
+          />
           <span className="text-3xl animate-star-rotate">⭐</span>
           <h1 className="text-xl sm:text-2xl text-[#ffd700] pixel-glow-gold tracking-wider">
             STAR FORGE

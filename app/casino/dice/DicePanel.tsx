@@ -315,6 +315,7 @@ export function DicePanel(props: DicePanelProps) {
         testIdPrefix="dice"
         ariaLabel="Dice controls"
         multiplier={multLabel}
+        dealerImageSrc="/casino/skrumpey-dealer-deal.png"
         sideSelector={sideSelector}
         stakeUnit="MON"
         stake={stake}
@@ -334,6 +335,7 @@ export function DicePanel(props: DicePanelProps) {
           reveal={serverReveal}
           salt={clientSeed ?? undefined}
           game="dice"
+          dealerImageSrc="/casino/skrumpey-dealer-cheer.png"
         />
       ) : null}
     </div>

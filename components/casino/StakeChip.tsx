@@ -1,6 +1,6 @@
 // StakeChip — small primitive consumed by <BetPanel>'s chip cluster.
 //
-// Ported from BunnyBagz `apps/web/src/components/StakeChip.tsx` for the SWO
+// Ported from the upstream BB reference (`apps/web/src/components/StakeChip.tsx`) for the SWO
 // Cosmic Casino. Behaviour identical: each chip applies a transform to the
 // current numeric stake and emits the result. Canonical actions:
 //

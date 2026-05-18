@@ -1,8 +1,8 @@
 // BetPanel — shared bet-panel primitive for SWO Cosmic Casino.
 //
-// Ported from BunnyBagz `apps/web/src/components/BetPanel.tsx` to live
-// inside the SWO repo under `components/casino/`. Each Casino game page
-// (slots, dice, hilo, coinflip) consumes this primitive instead of
+// Ported from the upstream BB reference (`apps/web/src/components/BetPanel.tsx`)
+// to live inside the SWO repo under `components/casino/`. Each Casino game
+// page (slots, dice, hilo, coinflip) consumes this primitive instead of
 // open-coding ~150 lines of inline panel styles + chrome.
 //
 // Anatomy:
@@ -17,7 +17,13 @@
 //   │  {extras: tx hash, errors, refunds…}     │
 //   └──────────────────────────────────────────┘
 //
-// Carried forward from BB verbatim — two QA fixes the design org signed off:
+// [SWO_CASINO_MASCOT_SWAP] The original upstream component shipped with a
+// non-SWO mascot. SWO instead uses Star Skrumpey dealer art (see
+// `public/casino/skrumpey-dealer-*.png`) reused from existing Skrumpey IP.
+// Pass `dealerImageSrc` to render a small dealer portrait at the top of
+// the panel; omit to render the panel without one.
+//
+// Carried forward from upstream verbatim — two QA fixes the design org signed off:
 //   (1) Mobile touch-target floor: stake input + token-toggle wrapper
 //       both get `min-height: 44px` (class `swo-casino-hit-44`,
 //       renamed from BB's `bb-hit-target-44`).
@@ -26,6 +32,7 @@
 //       caller's wagmi promise resolves. This guarantees users see the
 //       "Confirm in wallet…" label long enough to read it on a fast
 //       network where writeContract resolves before the next paint.
+// (BB QA contracts — class names renamed to `swo-casino-*` in the port.)
 
 'use client';
 
@@ -47,6 +54,14 @@ export type BetPanelProps = {
   ariaLabel?: string;
   /** Hero-sized multiplier badge (e.g. "1.98×", "2.20×"). */
   multiplier: string;
+  /**
+   * Optional Star Skrumpey dealer portrait shown above the multiplier badge.
+   * Pass a path under `/casino/skrumpey-dealer-*.png` (see `public/casino/`).
+   * Omit to hide the dealer.
+   */
+  dealerImageSrc?: string;
+  /** Alt text for the dealer portrait. Defaults to "Star Skrumpey dealer". */
+  dealerImageAlt?: string;
   /** Game-specific picker. */
   sideSelector?: ReactNode;
   /** Token unit shown next to the stake (`MON` | `USDm`). */
@@ -91,6 +106,8 @@ export function BetPanel(props: BetPanelProps) {
     testIdPrefix,
     ariaLabel = 'Bet controls',
     multiplier,
+    dealerImageSrc,
+    dealerImageAlt = 'Star Skrumpey dealer',
     sideSelector,
     stakeUnit,
     stake,
@@ -158,6 +175,17 @@ export function BetPanel(props: BetPanelProps) {
       >
         {liveMessage ?? ''}
       </div>
+
+      {dealerImageSrc && (
+        <img
+          src={dealerImageSrc}
+          alt={dealerImageAlt}
+          data-testid={`${testIdPrefix}-dealer-image`}
+          style={dealerImageStyle}
+          width={64}
+          height={64}
+        />
+      )}
 
       <div
         style={multiplierBadgeStyle}
@@ -255,6 +283,17 @@ const panelStyle: CSSProperties = {
   gap: '0.75rem',
   marginTop: 'auto',
   position: 'relative',
+};
+
+const dealerImageStyle: CSSProperties = {
+  alignSelf: 'center',
+  width: 64,
+  height: 64,
+  borderRadius: 12,
+  imageRendering: 'pixelated',
+  background: 'var(--swo-casino-elevated, rgba(255,255,255,0.06))',
+  border: '1px solid var(--swo-casino-border, rgba(255,255,255,0.16))',
+  padding: 4,
 };
 
 const multiplierBadgeStyle: CSSProperties = {

@@ -1,5 +1,5 @@
 // FairnessProof — commit/reveal/outcome receipt for the SWO Cosmic Casino,
-// ported from BunnyBagz `apps/web/src/components/FairnessProof.tsx`.
+// ported from the upstream BB reference (`apps/web/src/components/FairnessProof.tsx`).
 //
 // Anatomy:
 //   Commit   0xabc…123 [copy]
@@ -48,6 +48,13 @@ export interface FairnessProofProps {
    * Receives the raw text and should resolve when the copy completes.
    */
   copy?: (text: string) => Promise<void>;
+  /**
+   * Optional Star Skrumpey dealer seal rendered in the heading row.
+   * [SWO_CASINO_MASCOT_SWAP] — pass a path under `/casino/skrumpey-dealer-*.png`.
+   */
+  dealerImageSrc?: string;
+  /** Alt text for the dealer seal. Defaults to "Star Skrumpey dealer". */
+  dealerImageAlt?: string;
 }
 
 const COPY_RESET_MS = 1500;
@@ -75,6 +82,8 @@ export function FairnessProof({
   game = 'coinflip',
   expectedCommit,
   copy = defaultCopy,
+  dealerImageSrc,
+  dealerImageAlt = 'Star Skrumpey dealer',
 }: FairnessProofProps) {
   const triple: FairnessTriple = useMemo(
     () => deriveTriple({ reveal, salt, game }),
@@ -100,7 +109,19 @@ export function FairnessProof({
       aria-label="Provably fair receipt"
       style={containerStyle}
     >
-      <h3 style={headingStyle}>Provably fair receipt</h3>
+      <div style={headingRowStyle}>
+        {dealerImageSrc && (
+          <img
+            src={dealerImageSrc}
+            alt={dealerImageAlt}
+            data-testid="swo-fairness-dealer-image"
+            style={dealerSealStyle}
+            width={28}
+            height={28}
+          />
+        )}
+        <h3 style={headingStyle}>Provably fair receipt</h3>
+      </div>
 
       {matchesExpected !== null ? (
         <p
@@ -209,6 +230,22 @@ const headingStyle: CSSProperties = {
   textTransform: 'uppercase',
   letterSpacing: '0.08em',
   opacity: 0.7,
+};
+
+const headingRowStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+};
+
+const dealerSealStyle: CSSProperties = {
+  width: 28,
+  height: 28,
+  borderRadius: 6,
+  imageRendering: 'pixelated',
+  background: 'var(--swo-elevated, rgba(255,255,255,0.06))',
+  border: '1px solid var(--swo-border, rgba(255,255,255,0.18))',
+  padding: 2,
 };
 
 const rowStyle: CSSProperties = {

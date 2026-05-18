@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 //
 // WalletSheet — proves the focus-trap + Esc-returns-focus + hit-target
-// contracts carried forward from BunnyBagz (lesson D2 in
+// contracts carried forward from upstream BB (lesson D2 in
 // `bb_keyboard_nav_audit_2026-05-09.md` and the
 // WALLETSHEET_ESCAPE_AND_FOCUS_TRAP refinement).
 //
